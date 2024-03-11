@@ -8,62 +8,45 @@ pipeline {
 	    SCANNER_HOME= tool 'sonar-scanner'
     }
     stages {
-   stage('Checkout from Git') {
+        stage('Checkout from Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/bkrrajmali/newncplspringbootapp.git'
             }
         }
-
-      stage ('Build') {
+        stage ('Build') {
           steps {
             sh 'mvn clean install'           
             }
       }
-  stage('Test') {
+        stage('Test') {
             script{
-
                 sh 'mvn test'
-            }
-    
+            } 
         }
-    stage('Integration testing'){
-
+        stage('Integration testing'){
         steps{
-
             script{
-
                // sh 'mvn verify -DskipUnitTests'
                 sh 'mvn verify'
             }
         }
     }
-
-    stage('Static code analysis'){
-
+        stage('Static code analysis'){
         steps{
-
             script{
-
                 withSonarQubeEnv(credentialsId: 'sonar') {
-
                     sh 'mvn clean package sonar:sonar'
                 }
                }
-
             }
         }
         stage('Quality Gate Status'){
-
             steps{
-
                 script{
-
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonar'
                 }
             }
         }
-
-
    stage('Unit Test') {
       steps {
         echo '<--------------- Unit Testing started  --------------->'
