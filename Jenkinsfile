@@ -20,15 +20,49 @@ pipeline {
             }
       }
   stage('Test') {
-            steps {
+            script{
+
                 sh 'mvn test'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+    
+        }
+    stage('Integration testing'){
+
+        steps{
+
+            script{
+
+               // sh 'mvn verify -DskipUnitTests'
+                sh 'mvn verify'
+            }
+        }
+    }
+
+    stage('Static code analysis'){
+
+        steps{
+
+            script{
+
+                withSonarQubeEnv(credentialsId: 'sonar') {
+
+                    sh 'mvn clean package sonar:sonar'
+                }
+               }
+
+            }
+        }
+        stage('Quality Gate Status'){
+
+            steps{
+
+                script{
+
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar'
                 }
             }
         }
+
 
    stage('Unit Test') {
       steps {
