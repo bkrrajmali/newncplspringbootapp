@@ -30,14 +30,6 @@ pipeline {
             }
         }
 
-    stage ('Build') {
-          steps {
-
-            sh 'mvn clean install'    
-
-            }
-      }
-
    stage('Unit Test') {
       steps {
         echo '<--------------- Unit Testing started  --------------->'
